@@ -446,14 +446,90 @@ DETAIL:  Key (id_anfitrion)=(1) is still referenced from table "habitaciones".
 
 ## NIVEL II
 
-Parte 5. Filtros con WHERE
-19. Mostrar las habitaciones cuyo tipo sea `Privada`.
-20. Mostrar las habitaciones cuyo tipo sea `Compartida`.
-21. Mostrar las reservas cuyo estado sea `pendiente`.
-22. Mostrar las reservas cuyo estado sea `confirmada`.
-23. Mostrar las habitaciones cuyo precio por noche sea mayor a `120000`.
-24. Mostrar las habitaciones publicadas después del `1 de enero de 2024`.
-25. Mostrar los anfitriones cuyo nombre sea `Carlos`.
+### Parte 5. Filtros con WHERE
+
+**19. Mostrar las habitaciones cuyo tipo sea `Privada`.**
+
+```sql
+SELECT * FROM habitaciones
+WHERE tipo = 'Privada';
+```
+
+| id_habitacion | id_anfitrion | titulo | tipo | ciudad | precio_noche | capacidad | fecha_publicacion |
+|---|---|---|---|---|---|---|---|
+| 1 | 1 | Loft Central | Privada | Bogotá | 160000.00 | 2 | 2024-02-10 |
+| 2 | 1 | Suite Norte | Privada | Bogotá | 220000.00 | 2 | 2024-05-01 |
+
+**20. Mostrar las habitaciones cuyo tipo sea `Compartida`.**
+
+```sql
+SELECT * FROM habitaciones
+WHERE tipo = 'Compartida';
+```
+
+| id_habitacion | id_anfitrion | titulo | tipo | ciudad | precio_noche | capacidad | fecha_publicacion |
+|---|---|---|---|---|---|---|---|
+| 3 | 2 | Habitación Centro Histórico | Compartida | Cartagena | 70000.00 | 4 | 2023-11-05 |
+| 4 | 3 | Cuarto Compartido Poblado | Compartida | Medellín | 85000.00 | 3 | 2024-03-15 |
+
+**21. Mostrar las reservas cuyo estado sea `pendiente`.**
+
+```sql
+SELECT * FROM reservas
+WHERE estado = 'pendiente';
+```
+
+| id_reserva | id_huesped | id_habitacion | fecha_checkin | fecha_checkout | estado |
+|---|---|---|---|---|---|
+| 5 | 3 | 1 | 2025-04-10 | 2025-04-13 | pendiente |
+
+**22. Mostrar las reservas cuyo estado sea `confirmada`.**
+
+```sql
+SELECT * FROM reservas
+WHERE estado = 'confirmada';
+```
+
+| id_reserva | id_huesped | id_habitacion | fecha_checkin | fecha_checkout | estado |
+|---|---|---|---|---|---|
+| 2 | 1 | 1 | 2025-03-01 | 2025-03-05 | confirmada |
+
+**23. Mostrar las habitaciones cuyo precio por noche sea mayor a `120000`.**
+
+```sql
+SELECT * FROM habitaciones
+WHERE precio_noche > 120000;
+```
+
+| id_habitacion | id_anfitrion | titulo | tipo | ciudad | precio_noche | capacidad | fecha_publicacion |
+|---|---|---|---|---|---|---|---|
+| 1 | 1 | Loft Central | Privada | Bogotá | 160000.00 | 2 | 2024-02-10 |
+| 2 | 1 | Suite Norte | Privada | Bogotá | 220000.00 | 2 | 2024-05-01 |
+| 5 | 2 | Apartamento Laureles | Entera | Medellín | 180000.00 | 5 | 2023-08-20 |
+
+**24. Mostrar las habitaciones publicadas después del `1 de enero de 2024`.**
+
+```sql
+SELECT * FROM habitaciones
+WHERE fecha_publicacion > '2024-01-01';
+```
+
+| id_habitacion | id_anfitrion | titulo | tipo | ciudad | precio_noche | capacidad | fecha_publicacion |
+|---|---|---|---|---|---|---|---|
+| 1 | 1 | Loft Central | Privada | Bogotá | 160000.00 | 2 | 2024-02-10 |
+| 2 | 1 | Suite Norte | Privada | Bogotá | 220000.00 | 2 | 2024-05-01 |
+| 4 | 3 | Cuarto Compartido Poblado | Compartida | Medellín | 85000.00 | 3 | 2024-03-15 |
+
+**25. Mostrar los anfitriones cuyo nombre sea `Carlos`.**
+
+```sql
+SELECT * FROM anfitriones
+WHERE nombre = 'Carlos';
+```
+
+| id_anfitrion | nombre | apellido | email | telefono |
+|---|---|---|---|---|
+| 1 | Carlos | Ramírez | carlos.ramirez@email.com | 3001112233 |
 
 Parte 6. Búsquedas con LIKE
 26. Mostrar los anfitriones cuyo nombre empiece por `L`.
