@@ -229,15 +229,109 @@ Resultado: `INSERT 0 3`, `INSERT 0 3`, `INSERT 0 5`, `INSERT 0 4`, `INSERT 0 6`,
 - Habitaciones con y sin servicios (54, 55), con y sin reseñas (52, 53), y con más de un servicio incluso después de borrar uno (15, 73).
 - Una reserva cancelada sin pagos para poder borrarla sin romper la integridad (16), y dos pendientes para que quede una después del UPDATE (11, 21).
 
-Parte 2. READ
-2. Mostrar todos los registros de la tabla `anfitriones`.
-3. Mostrar todos los registros de la tabla `huespedes`.
-4. Mostrar todos los registros de la tabla `habitaciones`.
-5. Mostrar todos los registros de la tabla `reservas`.
-6. Mostrar todos los registros de la tabla `pagos`.
-7. Mostrar solo el nombre y el email de los anfitriones.
-8. Mostrar solo el título, tipo y ciudad de las habitaciones.
-9. Mostrar el nombre y teléfono de los huéspedes.
+### Parte 2. READ
+
+**2. Mostrar todos los registros de la tabla `anfitriones`.**
+
+```sql
+SELECT * FROM anfitriones;
+```
+
+| id_anfitrion | nombre | apellido | email | telefono |
+|---|---|---|---|---|
+| 1 | Carlos | Ramírez | carlos.ramirez@email.com | 3001112233 |
+| 2 | Laura | Gómez | laura.gomez@email.com | 3102223344 |
+| 3 | Luis | Martínez | luis.martinez@email.com | 3203334455 |
+
+**3. Mostrar todos los registros de la tabla `huespedes`.**
+
+```sql
+SELECT * FROM huespedes;
+```
+
+| id_huesped | nombre | apellido | email | telefono |
+|---|---|---|---|---|
+| 1 | Paula | Ríos | paula.rios@email.com | 3014445566 |
+| 2 | Mateo | Herrera | mateo.herrera@email.com | 3115556677 |
+| 3 | María | López | maria.lopez@email.com | 3156667788 |
+
+**4. Mostrar todos los registros de la tabla `habitaciones`.**
+
+```sql
+SELECT * FROM habitaciones;
+```
+
+| id_habitacion | id_anfitrion | titulo | tipo | ciudad | precio_noche | capacidad | fecha_publicacion |
+|---|---|---|---|---|---|---|---|
+| 1 | 1 | Loft Central | Privada | Bogotá | 150000.00 | 2 | 2024-02-10 |
+| 2 | 1 | Suite Norte | Privada | Bogotá | 220000.00 | 2 | 2024-05-01 |
+| 3 | 2 | Habitación Centro Histórico | Compartida | Cartagena | 70000.00 | 4 | 2023-11-05 |
+| 4 | 3 | Cuarto Compartido Poblado | Compartida | Medellín | 85000.00 | 3 | 2024-03-15 |
+| 5 | 2 | Apartamento Laureles | Entera | Medellín | 180000.00 | 5 | 2023-08-20 |
+
+**5. Mostrar todos los registros de la tabla `reservas`.**
+
+```sql
+SELECT * FROM reservas;
+```
+
+| id_reserva | id_huesped | id_habitacion | fecha_checkin | fecha_checkout | estado |
+|---|---|---|---|---|---|
+| 1 | 1 | 2 | 2024-06-10 | 2024-06-14 | completada |
+| 2 | 1 | 1 | 2025-03-01 | 2025-03-05 | pendiente |
+| 3 | 2 | 3 | 2024-07-20 | 2024-07-22 | completada |
+| 4 | 3 | 5 | 2024-08-05 | 2024-08-10 | cancelada |
+| 5 | 3 | 1 | 2025-04-10 | 2025-04-13 | pendiente |
+
+**6. Mostrar todos los registros de la tabla `pagos`.**
+
+```sql
+SELECT * FROM pagos;
+```
+
+| id_pago | id_reserva | monto | fecha_pago | metodo_pago |
+|---|---|---|---|---|
+| 1 | 1 | 880000.00 | 2024-06-01 | tarjeta |
+| 2 | 2 | 600000.00 | 2025-02-15 | transferencia |
+| 3 | 3 | 140000.00 | 2024-07-15 | efectivo |
+
+**7. Mostrar solo el nombre y el email de los anfitriones.**
+
+```sql
+SELECT nombre, email FROM anfitriones;
+```
+
+| nombre | email |
+|---|---|
+| Carlos | carlos.ramirez@email.com |
+| Laura | laura.gomez@email.com |
+| Luis | luis.martinez@email.com |
+
+**8. Mostrar solo el título, tipo y ciudad de las habitaciones.**
+
+```sql
+SELECT titulo, tipo, ciudad FROM habitaciones;
+```
+
+| titulo | tipo | ciudad |
+|---|---|---|
+| Loft Central | Privada | Bogotá |
+| Suite Norte | Privada | Bogotá |
+| Habitación Centro Histórico | Compartida | Cartagena |
+| Cuarto Compartido Poblado | Compartida | Medellín |
+| Apartamento Laureles | Entera | Medellín |
+
+**9. Mostrar el nombre y teléfono de los huéspedes.**
+
+```sql
+SELECT nombre, telefono FROM huespedes;
+```
+
+| nombre | telefono |
+|---|---|
+| Paula | 3014445566 |
+| Mateo | 3115556677 |
+| María | 3156667788 |
 
 Parte 3. UPDATE
 10. Actualizar el teléfono de un anfitrión.
