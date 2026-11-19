@@ -987,7 +987,7 @@ ORDER BY h.id_habitacion;
 
 `DISTINCT` evita que una habitación salga repetida si tiene varias reseñas.
 
-**53. ¿Qué habitaciones no tienen reseñas registradas? Sugerencia: usar `LEFT JOIN`.**
+**53. ¿Qué habitaciones no tienen reseñas registradas?.**
 
 ```sql
 SELECT h.id_habitacion, h.titulo
