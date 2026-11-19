@@ -1130,13 +1130,111 @@ SELECT SUM(monto) AS ingresos_totales FROM pagos;
 
 880000 + 640000 + 140000 = 1660000.
 
-Parte 12. GROUP BY
-64. ¿Cuántas habitaciones hay por tipo?
-65. ¿Cuántas habitaciones tiene cada anfitrión?
-66. ¿Cuántas reservas tiene cada huésped?
-67. ¿Cuántas reservas tiene cada habitación?
-68. ¿Cuántos servicios tiene asignados cada habitación?
-69. ¿Cuál es el precio promedio por noche por ciudad?
+### Parte 12. GROUP BY
+
+**64. ¿Cuántas habitaciones hay por tipo?**
+
+```sql
+SELECT tipo, COUNT(*) AS cantidad
+FROM habitaciones
+GROUP BY tipo
+ORDER BY cantidad DESC, tipo;
+```
+
+| tipo | cantidad |
+|---|---|
+| Compartida | 2 |
+| Privada | 2 |
+| Entera | 1 |
+
+**65. ¿Cuántas habitaciones tiene cada anfitrión?**
+
+```sql
+SELECT a.nombre || ' ' || a.apellido AS anfitrion,
+       COUNT(h.id_habitacion) AS habitaciones
+FROM anfitriones a
+LEFT JOIN habitaciones h ON h.id_anfitrion = a.id_anfitrion
+GROUP BY a.id_anfitrion, a.nombre, a.apellido
+ORDER BY a.id_anfitrion;
+```
+
+| anfitrion | habitaciones |
+|---|---|
+| Carlos Ramírez | 2 |
+| Laura Gómez | 2 |
+| Luis Martínez | 1 |
+
+Se usa `LEFT JOIN` y `COUNT(h.id_habitacion)` (no `COUNT(*)`) para que un anfitrión sin habitaciones aparezca con 0 en lugar de desaparecer o contar 1.
+
+**66. ¿Cuántas reservas tiene cada huésped?**
+
+```sql
+SELECT hu.nombre || ' ' || hu.apellido AS huesped,
+       COUNT(r.id_reserva) AS reservas
+FROM huespedes hu
+LEFT JOIN reservas r ON r.id_huesped = hu.id_huesped
+GROUP BY hu.id_huesped, hu.nombre, hu.apellido
+ORDER BY hu.id_huesped;
+```
+
+| huesped | reservas |
+|---|---|
+| Paula Ríos | 2 |
+| Mateo Herrera | 1 |
+| María López | 1 |
+
+**67. ¿Cuántas reservas tiene cada habitación?**
+
+```sql
+SELECT h.titulo AS habitacion,
+       COUNT(r.id_reserva) AS reservas
+FROM habitaciones h
+LEFT JOIN reservas r ON r.id_habitacion = h.id_habitacion
+GROUP BY h.id_habitacion, h.titulo
+ORDER BY h.id_habitacion;
+```
+
+| habitacion | reservas |
+|---|---|
+| Loft Central | 2 |
+| Suite Norte | 1 |
+| Habitación Centro Histórico | 1 |
+| Cuarto Compartido Poblado | 0 |
+| Apartamento Laureles | 0 |
+
+**68. ¿Cuántos servicios tiene asignados cada habitación?**
+
+```sql
+SELECT h.titulo AS habitacion,
+       COUNT(hs.id_servicio) AS servicios
+FROM habitaciones h
+LEFT JOIN habitacion_servicios hs ON hs.id_habitacion = h.id_habitacion
+GROUP BY h.id_habitacion, h.titulo
+ORDER BY h.id_habitacion;
+```
+
+| habitacion | servicios |
+|---|---|
+| Loft Central | 2 |
+| Suite Norte | 2 |
+| Habitación Centro Histórico | 1 |
+| Cuarto Compartido Poblado | 0 |
+| Apartamento Laureles | 0 |
+
+**69. ¿Cuál es el precio promedio por noche por ciudad?**
+
+```sql
+SELECT ciudad, ROUND(AVG(precio_noche), 2) AS precio_promedio
+FROM habitaciones
+GROUP BY ciudad
+ORDER BY ciudad;
+```
+
+| ciudad | precio_promedio |
+|---|---|
+| Bogotá | 190000.00 |
+| Cartagena | 70000.00 |
+| Medellín | 132500.00 |
 
 Parte 13. GROUP BY + HAVING
 70. Mostrar los anfitriones que tengan más de una habitación.
