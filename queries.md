@@ -714,17 +714,197 @@ WHERE ciudad IN ('Bogotá', 'Medellín');
 
 ## NIVEL III
 
-Parte 9. Relaciones con JOIN
-38. Mostrar el título de cada habitación junto con el nombre de su anfitrión.
-39. Mostrar el título, tipo de habitación y nombre del anfitrión.
-40. Mostrar las reservas junto con el nombre del huésped.
-41. Mostrar las reservas junto con el título de la habitación.
-42. Mostrar las reservas con id de reserva, huésped, habitación, fecha check-in, fecha check-out y estado.
-43. Mostrar los pagos junto con el nombre del huésped.
-44. Mostrar los servicios asignados a cada habitación.
-45. Mostrar habitación, servicio, costo_adicional y disponibilidad.
-46. Mostrar todas las habitaciones con su anfitrión y sus reseñas.
-47. Mostrar todas las reservas con huésped, anfitrión y habitación.
+### Parte 9. Relaciones con JOIN
+
+**38. Mostrar el título de cada habitación junto con el nombre de su anfitrión.**
+
+```sql
+SELECT h.titulo, a.nombre || ' ' || a.apellido AS anfitrion
+FROM habitaciones h
+JOIN anfitriones a ON a.id_anfitrion = h.id_anfitrion
+ORDER BY h.id_habitacion;
+```
+
+| titulo | anfitrion |
+|---|---|
+| Loft Central | Carlos Ramírez |
+| Suite Norte | Carlos Ramírez |
+| Habitación Centro Histórico | Laura Gómez |
+| Cuarto Compartido Poblado | Luis Martínez |
+| Apartamento Laureles | Laura Gómez |
+
+**39. Mostrar el título, tipo de habitación y nombre del anfitrión.**
+
+```sql
+SELECT h.titulo, h.tipo, a.nombre || ' ' || a.apellido AS anfitrion
+FROM habitaciones h
+JOIN anfitriones a ON a.id_anfitrion = h.id_anfitrion
+ORDER BY h.id_habitacion;
+```
+
+| titulo | tipo | anfitrion |
+|---|---|---|
+| Loft Central | Privada | Carlos Ramírez |
+| Suite Norte | Privada | Carlos Ramírez |
+| Habitación Centro Histórico | Compartida | Laura Gómez |
+| Cuarto Compartido Poblado | Compartida | Luis Martínez |
+| Apartamento Laureles | Entera | Laura Gómez |
+
+**40. Mostrar las reservas junto con el nombre del huésped.**
+
+```sql
+SELECT r.id_reserva, hu.nombre || ' ' || hu.apellido AS huesped,
+       r.fecha_checkin, r.fecha_checkout, r.estado
+FROM reservas r
+JOIN huespedes hu ON hu.id_huesped = r.id_huesped
+ORDER BY r.id_reserva;
+```
+
+| id_reserva | huesped | fecha_checkin | fecha_checkout | estado |
+|---|---|---|---|---|
+| 1 | Paula Ríos | 2024-06-10 | 2024-06-14 | completada |
+| 2 | Paula Ríos | 2025-03-01 | 2025-03-05 | confirmada |
+| 3 | Mateo Herrera | 2024-07-20 | 2024-07-22 | completada |
+| 5 | María López | 2025-04-10 | 2025-04-13 | pendiente |
+
+**41. Mostrar las reservas junto con el título de la habitación.**
+
+```sql
+SELECT r.id_reserva, h.titulo AS habitacion,
+       r.fecha_checkin, r.fecha_checkout, r.estado
+FROM reservas r
+JOIN habitaciones h ON h.id_habitacion = r.id_habitacion
+ORDER BY r.id_reserva;
+```
+
+| id_reserva | habitacion | fecha_checkin | fecha_checkout | estado |
+|---|---|---|---|---|
+| 1 | Suite Norte | 2024-06-10 | 2024-06-14 | completada |
+| 2 | Loft Central | 2025-03-01 | 2025-03-05 | confirmada |
+| 3 | Habitación Centro Histórico | 2024-07-20 | 2024-07-22 | completada |
+| 5 | Loft Central | 2025-04-10 | 2025-04-13 | pendiente |
+
+**42. Mostrar las reservas con id de reserva, huésped, habitación, fecha check-in, fecha check-out y estado.**
+
+```sql
+SELECT r.id_reserva,
+       hu.nombre || ' ' || hu.apellido AS huesped,
+       h.titulo AS habitacion,
+       r.fecha_checkin,
+       r.fecha_checkout,
+       r.estado
+FROM reservas r
+JOIN huespedes hu   ON hu.id_huesped   = r.id_huesped
+JOIN habitaciones h ON h.id_habitacion = r.id_habitacion
+ORDER BY r.id_reserva;
+```
+
+| id_reserva | huesped | habitacion | fecha_checkin | fecha_checkout | estado |
+|---|---|---|---|---|---|
+| 1 | Paula Ríos | Suite Norte | 2024-06-10 | 2024-06-14 | completada |
+| 2 | Paula Ríos | Loft Central | 2025-03-01 | 2025-03-05 | confirmada |
+| 3 | Mateo Herrera | Habitación Centro Histórico | 2024-07-20 | 2024-07-22 | completada |
+| 5 | María López | Loft Central | 2025-04-10 | 2025-04-13 | pendiente |
+
+**43. Mostrar los pagos junto con el nombre del huésped.**
+
+```sql
+SELECT p.id_pago, hu.nombre || ' ' || hu.apellido AS huesped,
+       p.monto, p.fecha_pago, p.metodo_pago
+FROM pagos p
+JOIN reservas r   ON r.id_reserva  = p.id_reserva
+JOIN huespedes hu ON hu.id_huesped = r.id_huesped
+ORDER BY p.id_pago;
+```
+
+| id_pago | huesped | monto | fecha_pago | metodo_pago |
+|---|---|---|---|---|
+| 1 | Paula Ríos | 880000.00 | 2024-06-01 | tarjeta |
+| 2 | Paula Ríos | 640000.00 | 2025-02-15 | transferencia |
+| 3 | Mateo Herrera | 140000.00 | 2024-07-15 | efectivo |
+
+El pago no guarda el huésped directamente: se llega a él a través de la reserva (`pagos → reservas → huespedes`).
+
+**44. Mostrar los servicios asignados a cada habitación.**
+
+```sql
+SELECT h.titulo AS habitacion, s.nombre AS servicio
+FROM habitacion_servicios hs
+JOIN habitaciones h ON h.id_habitacion = hs.id_habitacion
+JOIN servicios s    ON s.id_servicio   = hs.id_servicio
+ORDER BY h.id_habitacion, s.nombre;
+```
+
+| habitacion | servicio |
+|---|---|
+| Loft Central | Desayuno |
+| Loft Central | Wi-Fi |
+| Suite Norte | Aire acondicionado |
+| Suite Norte | Wi-Fi |
+| Habitación Centro Histórico | Wi-Fi |
+
+**45. Mostrar habitación, servicio, costo_adicional y disponibilidad.**
+
+```sql
+SELECT h.titulo AS habitacion, s.nombre AS servicio,
+       hs.costo_adicional, hs.disponible
+FROM habitacion_servicios hs
+JOIN habitaciones h ON h.id_habitacion = hs.id_habitacion
+JOIN servicios s    ON s.id_servicio   = hs.id_servicio
+ORDER BY h.id_habitacion, s.nombre;
+```
+
+| habitacion | servicio | costo_adicional | disponible |
+|---|---|---|---|
+| Loft Central | Desayuno | 30000.00 | true |
+| Loft Central | Wi-Fi | 0.00 | true |
+| Suite Norte | Aire acondicionado | 20000.00 | false |
+| Suite Norte | Wi-Fi | 0.00 | true |
+| Habitación Centro Histórico | Wi-Fi | 0.00 | true |
+
+**46. Mostrar todas las habitaciones con su anfitrión y sus reseñas.**
+
+```sql
+SELECT h.titulo AS habitacion,
+       a.nombre || ' ' || a.apellido AS anfitrion,
+       re.calificacion,
+       re.comentario
+FROM habitaciones h
+JOIN anfitriones a  ON a.id_anfitrion   = h.id_anfitrion
+LEFT JOIN resenas re ON re.id_habitacion = h.id_habitacion
+ORDER BY h.id_habitacion;
+```
+
+| habitacion | anfitrion | calificacion | comentario |
+|---|---|---|---|
+| Loft Central | Carlos Ramírez | NULL | NULL |
+| Suite Norte | Carlos Ramírez | 5 | Excelente vista y muy limpia |
+| Habitación Centro Histórico | Laura Gómez | 4 | Buena ubicación, algo ruidosa |
+| Cuarto Compartido Poblado | Luis Martínez | NULL | NULL |
+| Apartamento Laureles | Laura Gómez | NULL | NULL |
+
+Se usa `LEFT JOIN` con `resenas` porque se piden **todas** las habitaciones: con un `JOIN` normal desaparecerían las que no tienen reseñas.
+
+**47. Mostrar todas las reservas con huésped, anfitrión y habitación.**
+
+```sql
+SELECT r.id_reserva,
+       hu.nombre || ' ' || hu.apellido AS huesped,
+       a.nombre  || ' ' || a.apellido  AS anfitrion,
+       h.titulo AS habitacion
+FROM reservas r
+JOIN huespedes hu   ON hu.id_huesped   = r.id_huesped
+JOIN habitaciones h ON h.id_habitacion = r.id_habitacion
+JOIN anfitriones a  ON a.id_anfitrion  = h.id_anfitrion
+ORDER BY r.id_reserva;
+```
+
+| id_reserva | huesped | anfitrion | habitacion |
+|---|---|---|---|
+| 1 | Paula Ríos | Carlos Ramírez | Suite Norte |
+| 2 | Paula Ríos | Carlos Ramírez | Loft Central |
+| 3 | Mateo Herrera | Laura Gómez | Habitación Centro Histórico |
+| 5 | María López | Carlos Ramírez | Loft Central |
 
 Parte 10. Consultas de negocio con JOIN
 48. ¿Qué habitaciones pertenecen al anfitrión `Carlos Ramírez`?
