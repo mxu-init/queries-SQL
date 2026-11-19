@@ -1,80 +1,5 @@
 # Inmobiliaria — Modelo relacional y consultas SQL (PostgreSQL)
 
-> **Cómo leer este documento:** el script está pensado para ejecutarse **en orden, de arriba abajo**, sobre una base de datos vacía.
-> Los resultados que se muestran debajo de cada consulta reflejan el estado de los datos **en ese momento**: la Parte 2 muestra los datos recién insertados, y a partir de la Parte 5 los datos ya incluyen los cambios hechos en las Partes 3 (UPDATE) y 4 (DELETE).
-
-## Modelo entidad-relación (DER)
-
-```mermaid
-erDiagram
-    ANFITRIONES ||--o{ HABITACIONES : publica
-    HABITACIONES ||--o{ HABITACION_SERVICIOS : ofrece
-    SERVICIOS ||--o{ HABITACION_SERVICIOS : "se asigna a"
-    HUESPEDES ||--o{ RESERVAS : realiza
-    HABITACIONES ||--o{ RESERVAS : "es reservada en"
-    RESERVAS ||--o{ PAGOS : genera
-    HUESPEDES ||--o{ RESENAS : escribe
-    HABITACIONES ||--o{ RESENAS : recibe
-
-    ANFITRIONES {
-        int id_anfitrion PK
-        varchar nombre
-        varchar apellido
-        varchar email UK
-        varchar telefono
-    }
-    HUESPEDES {
-        int id_huesped PK
-        varchar nombre
-        varchar apellido
-        varchar email UK
-        varchar telefono
-    }
-    HABITACIONES {
-        int id_habitacion PK
-        int id_anfitrion FK
-        varchar titulo
-        varchar tipo "Privada | Compartida | Entera"
-        varchar ciudad
-        numeric precio_noche
-        int capacidad
-        date fecha_publicacion
-    }
-    SERVICIOS {
-        int id_servicio PK
-        varchar nombre UK
-    }
-    HABITACION_SERVICIOS {
-        int id_habitacion PK,FK
-        int id_servicio PK,FK
-        numeric costo_adicional
-        boolean disponible
-    }
-    RESERVAS {
-        int id_reserva PK
-        int id_huesped FK
-        int id_habitacion FK
-        date fecha_checkin
-        date fecha_checkout
-        varchar estado "pendiente | confirmada | completada | cancelada"
-    }
-    PAGOS {
-        int id_pago PK
-        int id_reserva FK
-        numeric monto
-        date fecha_pago
-        varchar metodo_pago
-    }
-    RESENAS {
-        int id_resena PK
-        int id_habitacion FK
-        int id_huesped FK
-        int calificacion "1 a 5"
-        text comentario
-        date fecha_resena
-    }
-```
-
 ### Modelo relacional
 
 - **anfitriones** (<u>id_anfitrion</u>, nombre, apellido, email, telefono)
@@ -85,11 +10,6 @@ erDiagram
 - **reservas** (<u>id_reserva</u>, *id_huesped* → huespedes, *id_habitacion* → habitaciones, fecha_checkin, fecha_checkout, estado)
 - **pagos** (<u>id_pago</u>, *id_reserva* → reservas, monto, fecha_pago, metodo_pago)
 - **resenas** (<u>id_resena</u>, *id_habitacion* → habitaciones, *id_huesped* → huespedes, calificacion, comentario, fecha_resena)
-
-Decisiones de diseño:
-- `nombre` y `apellido` van en columnas separadas para poder resolver tanto *"nombre sea `Carlos`"* (pregunta 25) como *"anfitrión `Carlos Ramírez`"* (pregunta 48).
-- Las claves foráneas usan `ON DELETE RESTRICT` (no se puede borrar un registro padre mientras tenga hijos), salvo `habitacion_servicios.id_habitacion`, que usa `ON DELETE CASCADE`: si una habitación se elimina, sus servicios asignados no tienen sentido por sí solos.
-- Se usan `CHECK` para validar dominios (tipo de habitación, estado de reserva, precios positivos, calificación de 1 a 5, check-out posterior al check-in).
 
 ## NIVEL I
 
@@ -221,13 +141,6 @@ INSERT INTO resenas (id_habitacion, id_huesped, calificacion, comentario, fecha_
 ```
 
 Resultado: `INSERT 0 3`, `INSERT 0 3`, `INSERT 0 5`, `INSERT 0 4`, `INSERT 0 6`, `INSERT 0 5`, `INSERT 0 3`, `INSERT 0 2`.
-
-¿Por qué estos registros y no menos? Cada dato cubre al menos una pregunta:
-- 2 anfitriones cuyo nombre empieza por `L` (26) y 2 con más de una habitación (70); `Carlos Ramírez` (25, 48).
-- 2 huéspedes cuyo nombre empieza por `M` (27); `Paula Ríos` con 2 reservas (49, 72).
-- Habitaciones de los 3 tipos, con 2 tipos repetidos (64, 71); precios dentro y fuera de los rangos pedidos (23, 34); fechas antes y después de 2024 (24); un título con `Centro` (28); ciudades Bogotá/Medellín y otra distinta (37).
-- Habitaciones con y sin servicios (54, 55), con y sin reseñas (52, 53), y con más de un servicio incluso después de borrar uno (15, 73).
-- Una reserva cancelada sin pagos para poder borrarla sin romper la integridad (16), y dos pendientes para que quede una después del UPDATE (11, 21).
 
 ### Parte 2. READ
 
