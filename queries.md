@@ -169,7 +169,7 @@ CREATE TABLE resenas (
 
 Resultado: `CREATE TABLE` (×8). Se crean las 8 tablas vacías.
 
-**1. Inserta registros en las tablas creadas. (Inserta los registros MÍNIMOS necesarios para poder dar al menos una respuesta a las peticiones SQL que se piden en el ejercicio)**
+**1. Inserta registros en las tablas creadas.**
 
 ```sql
 INSERT INTO anfitriones (nombre, apellido, email, telefono) VALUES
