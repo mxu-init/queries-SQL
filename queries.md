@@ -1236,8 +1236,70 @@ ORDER BY ciudad;
 | Cartagena | 70000.00 |
 | Medellín | 132500.00 |
 
-Parte 13. GROUP BY + HAVING
-70. Mostrar los anfitriones que tengan más de una habitación.
-71. Mostrar los tipos de habitación que tengan más de una publicación.
-72. Mostrar los huéspedes que tengan más de una reserva.
-73. Mostrar las habitaciones que tengan más de un servicio asignado.
+### Parte 13. GROUP BY + HAVING
+
+> `WHERE` filtra filas **antes** de agrupar; `HAVING` filtra grupos **después** de agrupar, por eso es donde se pueden usar funciones de agregación como `COUNT()`.
+
+**70. Mostrar los anfitriones que tengan más de una habitación.**
+
+```sql
+SELECT a.nombre || ' ' || a.apellido AS anfitrion,
+       COUNT(h.id_habitacion) AS habitaciones
+FROM anfitriones a
+JOIN habitaciones h ON h.id_anfitrion = a.id_anfitrion
+GROUP BY a.id_anfitrion, a.nombre, a.apellido
+HAVING COUNT(h.id_habitacion) > 1
+ORDER BY a.id_anfitrion;
+```
+
+| anfitrion | habitaciones |
+|---|---|
+| Carlos Ramírez | 2 |
+| Laura Gómez | 2 |
+
+**71. Mostrar los tipos de habitación que tengan más de una publicación.**
+
+```sql
+SELECT tipo, COUNT(*) AS publicaciones
+FROM habitaciones
+GROUP BY tipo
+HAVING COUNT(*) > 1
+ORDER BY tipo;
+```
+
+| tipo | publicaciones |
+|---|---|
+| Compartida | 2 |
+| Privada | 2 |
+
+**72. Mostrar los huéspedes que tengan más de una reserva.**
+
+```sql
+SELECT hu.nombre || ' ' || hu.apellido AS huesped,
+       COUNT(r.id_reserva) AS reservas
+FROM huespedes hu
+JOIN reservas r ON r.id_huesped = hu.id_huesped
+GROUP BY hu.id_huesped, hu.nombre, hu.apellido
+HAVING COUNT(r.id_reserva) > 1;
+```
+
+| huesped | reservas |
+|---|---|
+| Paula Ríos | 2 |
+
+**73. Mostrar las habitaciones que tengan más de un servicio asignado.**
+
+```sql
+SELECT h.titulo AS habitacion,
+       COUNT(hs.id_servicio) AS servicios
+FROM habitaciones h
+JOIN habitacion_servicios hs ON hs.id_habitacion = h.id_habitacion
+GROUP BY h.id_habitacion, h.titulo
+HAVING COUNT(hs.id_servicio) > 1
+ORDER BY h.id_habitacion;
+```
+
+| habitacion | servicios |
+|---|---|
+| Loft Central | 2 |
+| Suite Norte | 2 |
