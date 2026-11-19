@@ -531,12 +531,70 @@ WHERE nombre = 'Carlos';
 |---|---|---|---|---|
 | 1 | Carlos | Ramírez | carlos.ramirez@email.com | 3001112233 |
 
-Parte 6. Búsquedas con LIKE
-26. Mostrar los anfitriones cuyo nombre empiece por `L`.
-27. Mostrar los huéspedes cuyo nombre empiece por `M`.
-28. Mostrar las habitaciones cuyo título contenga `Centro`.
-29. Mostrar los servicios cuyo nombre termine en `Fi`.
-30. Mostrar las habitaciones cuya ciudad contenga la letra `a`.
+### Parte 6. Búsquedas con LIKE
+
+> En PostgreSQL `LIKE` distingue mayúsculas de minúsculas (`ILIKE` no). `%` representa cualquier secuencia de caracteres.
+
+**26. Mostrar los anfitriones cuyo nombre empiece por `L`.**
+
+```sql
+SELECT * FROM anfitriones
+WHERE nombre LIKE 'L%';
+```
+
+| id_anfitrion | nombre | apellido | email | telefono |
+|---|---|---|---|---|
+| 2 | Laura | Gómez | laura.gomez@email.com | 3109998877 |
+| 3 | Luis | Martínez | luis.martinez@email.com | 3203334455 |
+
+**27. Mostrar los huéspedes cuyo nombre empiece por `M`.**
+
+```sql
+SELECT * FROM huespedes
+WHERE nombre LIKE 'M%';
+```
+
+| id_huesped | nombre | apellido | email | telefono |
+|---|---|---|---|---|
+| 2 | Mateo | Herrera | mateo.herrera@email.com | 3115556677 |
+| 3 | María | López | maria.lopez@email.com | 3156667788 |
+
+**28. Mostrar las habitaciones cuyo título contenga `Centro`.**
+
+```sql
+SELECT * FROM habitaciones
+WHERE titulo LIKE '%Centro%';
+```
+
+| id_habitacion | id_anfitrion | titulo | tipo | ciudad | precio_noche | capacidad | fecha_publicacion |
+|---|---|---|---|---|---|---|---|
+| 3 | 2 | Habitación Centro Histórico | Compartida | Cartagena | 70000.00 | 4 | 2023-11-05 |
+
+Nota: `Loft Central` no aparece porque contiene `Centr` pero no `Centro`.
+
+**29. Mostrar los servicios cuyo nombre termine en `Fi`.**
+
+```sql
+SELECT * FROM servicios
+WHERE nombre LIKE '%Fi';
+```
+
+| id_servicio | nombre |
+|---|---|
+| 1 | Wi-Fi |
+
+**30. Mostrar las habitaciones cuya ciudad contenga la letra `a`.**
+
+```sql
+SELECT * FROM habitaciones
+WHERE ciudad LIKE '%a%';
+```
+
+| id_habitacion | id_anfitrion | titulo | tipo | ciudad | precio_noche | capacidad | fecha_publicacion |
+|---|---|---|---|---|---|---|---|
+| 3 | 2 | Habitación Centro Histórico | Compartida | Cartagena | 70000.00 | 4 | 2023-11-05 |
+
+Nota: `Bogotá` no aparece porque su única "a" lleva tilde (`á`), y para SQL `á` y `a` son caracteres distintos. `Medellín` no tiene ninguna "a".
 
 Parte 7. Ordenamiento
 30. Mostrar las habitaciones ordenadas alfabéticamente por título.
