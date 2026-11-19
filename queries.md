@@ -655,13 +655,64 @@ ORDER BY nombre DESC;
 | 2 | Laura | Gómez | laura.gomez@email.com | 3109998877 |
 | 1 | Carlos | Ramírez | carlos.ramirez@email.com | 3001112233 |
 
-Parte 8. Rangos y listas
-34. Mostrar las habitaciones con precio por noche entre `80000` y `200000`.
-35. Mostrar las habitaciones cuyo tipo esté entre `Privada` y `Compartida` usando `IN`.
-36. Mostrar las reservas cuyo estado sea `pendiente` o `confirmada`.
-37. Mostrar las habitaciones ubicadas en `Bogotá` o `Medellín`.
+### Parte 8. Rangos y listas
 
-NIVEL III
+**34. Mostrar las habitaciones con precio por noche entre `80000` y `200000`.**
+
+```sql
+SELECT * FROM habitaciones
+WHERE precio_noche BETWEEN 80000 AND 200000;
+```
+
+| id_habitacion | id_anfitrion | titulo | tipo | ciudad | precio_noche | capacidad | fecha_publicacion |
+|---|---|---|---|---|---|---|---|
+| 1 | 1 | Loft Central | Privada | Bogotá | 160000.00 | 2 | 2024-02-10 |
+| 4 | 3 | Cuarto Compartido Poblado | Compartida | Medellín | 85000.00 | 3 | 2024-03-15 |
+| 5 | 2 | Apartamento Laureles | Entera | Medellín | 180000.00 | 5 | 2023-08-20 |
+
+`BETWEEN` incluye los dos extremos (equivale a `>= 80000 AND <= 200000`).
+
+**35. Mostrar las habitaciones cuyo tipo esté entre `Privada` y `Compartida` usando `IN`.**
+
+```sql
+SELECT * FROM habitaciones
+WHERE tipo IN ('Privada', 'Compartida');
+```
+
+| id_habitacion | id_anfitrion | titulo | tipo | ciudad | precio_noche | capacidad | fecha_publicacion |
+|---|---|---|---|---|---|---|---|
+| 1 | 1 | Loft Central | Privada | Bogotá | 160000.00 | 2 | 2024-02-10 |
+| 2 | 1 | Suite Norte | Privada | Bogotá | 220000.00 | 2 | 2024-05-01 |
+| 3 | 2 | Habitación Centro Histórico | Compartida | Cartagena | 70000.00 | 4 | 2023-11-05 |
+| 4 | 3 | Cuarto Compartido Poblado | Compartida | Medellín | 85000.00 | 3 | 2024-03-15 |
+
+**36. Mostrar las reservas cuyo estado sea `pendiente` o `confirmada`.**
+
+```sql
+SELECT * FROM reservas
+WHERE estado IN ('pendiente', 'confirmada');
+```
+
+| id_reserva | id_huesped | id_habitacion | fecha_checkin | fecha_checkout | estado |
+|---|---|---|---|---|---|
+| 2 | 1 | 1 | 2025-03-01 | 2025-03-05 | confirmada |
+| 5 | 3 | 1 | 2025-04-10 | 2025-04-13 | pendiente |
+
+**37. Mostrar las habitaciones ubicadas en `Bogotá` o `Medellín`.**
+
+```sql
+SELECT * FROM habitaciones
+WHERE ciudad IN ('Bogotá', 'Medellín');
+```
+
+| id_habitacion | id_anfitrion | titulo | tipo | ciudad | precio_noche | capacidad | fecha_publicacion |
+|---|---|---|---|---|---|---|---|
+| 1 | 1 | Loft Central | Privada | Bogotá | 160000.00 | 2 | 2024-02-10 |
+| 2 | 1 | Suite Norte | Privada | Bogotá | 220000.00 | 2 | 2024-05-01 |
+| 4 | 3 | Cuarto Compartido Poblado | Compartida | Medellín | 85000.00 | 3 | 2024-03-15 |
+| 5 | 2 | Apartamento Laureles | Entera | Medellín | 180000.00 | 5 | 2023-08-20 |
+
+## NIVEL III
 
 Parte 9. Relaciones con JOIN
 38. Mostrar el título de cada habitación junto con el nombre de su anfitrión.
