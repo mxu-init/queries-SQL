@@ -333,12 +333,61 @@ SELECT nombre, telefono FROM huespedes;
 | Mateo | 3115556677 |
 | María | 3156667788 |
 
-Parte 3. UPDATE
-10. Actualizar el teléfono de un anfitrión.
-11. Cambiar el estado de una reserva de `pendiente` a `confirmada`.
-12. Actualizar el precio por noche de una habitación.
-13. Cambiar el costo adicional de un servicio asignado a una habitación.
-14. Actualizar el monto de un pago.
+### Parte 3. UPDATE
+
+> Todas las actualizaciones filtran por clave primaria en el `WHERE`, para modificar exactamente una fila. Un `UPDATE` sin `WHERE` cambiaría **todas** las filas de la tabla.
+
+**10. Actualizar el teléfono de un anfitrión.**
+
+```sql
+UPDATE anfitriones
+SET telefono = '3109998877'
+WHERE id_anfitrion = 2;   -- Laura Gómez
+```
+
+Resultado: `UPDATE 1`. El teléfono de Laura Gómez pasa de `3102223344` a `3109998877`.
+
+**11. Cambiar el estado de una reserva de `pendiente` a `confirmada`.**
+
+```sql
+UPDATE reservas
+SET estado = 'confirmada'
+WHERE id_reserva = 2
+  AND estado = 'pendiente';
+```
+
+Resultado: `UPDATE 1`. La reserva 2 (Paula Ríos en Loft Central) queda `confirmada`. La condición `estado = 'pendiente'` evita "confirmar" por error una reserva cancelada o completada.
+
+**12. Actualizar el precio por noche de una habitación.**
+
+```sql
+UPDATE habitaciones
+SET precio_noche = 160000
+WHERE id_habitacion = 1;  -- Loft Central
+```
+
+Resultado: `UPDATE 1`. Loft Central pasa de `150000.00` a `160000.00`.
+
+**13. Cambiar el costo adicional de un servicio asignado a una habitación.**
+
+```sql
+UPDATE habitacion_servicios
+SET costo_adicional = 30000
+WHERE id_habitacion = 1   -- Loft Central
+  AND id_servicio = 3;    -- Desayuno
+```
+
+Resultado: `UPDATE 1`. El desayuno de Loft Central pasa de `25000.00` a `30000.00`. Como la clave primaria es compuesta, el `WHERE` necesita las dos columnas.
+
+**14. Actualizar el monto de un pago.**
+
+```sql
+UPDATE pagos
+SET monto = 640000
+WHERE id_pago = 2;
+```
+
+Resultado: `UPDATE 1`. El pago 2 pasa de `600000.00` a `640000.00` (4 noches × el nuevo precio de 160000).
 
 Parte 4. DELETE
 15. Eliminar un servicio asignado a una habitación.
