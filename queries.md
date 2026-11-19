@@ -389,13 +389,62 @@ WHERE id_pago = 2;
 
 Resultado: `UPDATE 1`. El pago 2 pasa de `600000.00` a `640000.00` (4 noches × el nuevo precio de 160000).
 
-Parte 4. DELETE
-15. Eliminar un servicio asignado a una habitación.
-16. Eliminar una reserva específica.
-17. Intentar eliminar una habitación que tenga reservas o reseñas y explicar qué ocurre y por qué.
-18. Intentar eliminar un anfitrión que tenga habitaciones registradas y explicar qué ocurre y por qué.
+### Parte 4. DELETE
 
-NIVEL II
+**15. Eliminar un servicio asignado a una habitación.**
+
+```sql
+DELETE FROM habitacion_servicios
+WHERE id_habitacion = 1   -- Loft Central
+  AND id_servicio = 2;    -- Parqueadero
+```
+
+Resultado: `DELETE 1`. Loft Central deja de ofrecer parqueadero. El servicio `Parqueadero` sigue existiendo en la tabla `servicios`; solo se borra la asignación.
+
+**16. Eliminar una reserva específica.**
+
+```sql
+DELETE FROM reservas
+WHERE id_reserva = 4;     -- reserva cancelada de María López
+```
+
+Resultado: `DELETE 1`. Funciona porque la reserva 4 no tiene pagos asociados. Si intentáramos borrar una reserva con pagos (por ejemplo la 1), PostgreSQL lo impediría por la clave foránea `pagos_id_reserva_fkey`.
+
+**17. Intentar eliminar una habitación que tenga reservas o reseñas y explicar qué ocurre y por qué.**
+
+```sql
+DELETE FROM habitaciones
+WHERE id_habitacion = 2;  -- Suite Norte: tiene la reserva 1 y la reseña 1
+```
+
+Resultado:
+
+```
+ERROR:  update or delete on table "habitaciones" violates foreign key constraint "reservas_id_habitacion_fkey" on table "reservas"
+DETAIL:  Key (id_habitacion)=(2) is still referenced from table "reservas".
+```
+
+**¿Qué ocurre y por qué?** PostgreSQL rechaza el borrado y la habitación sigue existiendo. La tabla `reservas` tiene una clave foránea `id_habitacion` que apunta a `habitaciones`, definida con `ON DELETE RESTRICT`. Si se borrara la Suite Norte, la reserva 1 quedaría apuntando a una habitación que ya no existe (un registro huérfano), y eso rompe la **integridad referencial**. Lo mismo pasaría con la reseña 1 por `resenas_id_habitacion_fkey`; el mensaje solo nombra la primera restricción que falla.
+
+Aunque `habitacion_servicios` sí tiene `ON DELETE CASCADE`, el borrado de sus filas tampoco ocurre: la sentencia completa falla y se revierte entera (atomicidad). Para eliminar la habitación habría que borrar antes sus reseñas, los pagos de sus reservas y sus reservas, o haber definido esas claves con `ON DELETE CASCADE` (lo cual borraría historial de negocio, así que no es recomendable aquí).
+
+**18. Intentar eliminar un anfitrión que tenga habitaciones registradas y explicar qué ocurre y por qué.**
+
+```sql
+DELETE FROM anfitriones
+WHERE id_anfitrion = 1;   -- Carlos Ramírez: tiene Loft Central y Suite Norte
+```
+
+Resultado:
+
+```
+ERROR:  update or delete on table "anfitriones" violates foreign key constraint "habitaciones_id_anfitrion_fkey" on table "habitaciones"
+DETAIL:  Key (id_anfitrion)=(1) is still referenced from table "habitaciones".
+```
+
+**¿Qué ocurre y por qué?** El borrado falla y Carlos Ramírez sigue registrado. La columna `habitaciones.id_anfitrion` es una clave foránea `NOT NULL` hacia `anfitriones` con `ON DELETE RESTRICT`: toda habitación debe tener un anfitrión válido. Si se permitiera el borrado, Loft Central y Suite Norte quedarían sin dueño. Para eliminar al anfitrión habría que reasignar sus habitaciones a otro anfitrión (`UPDATE habitaciones SET id_anfitrion = ...`) o eliminarlas antes (lo cual, a su vez, chocaría con las reservas, como en la pregunta 17).
+
+## NIVEL II
 
 Parte 5. Filtros con WHERE
 19. Mostrar las habitaciones cuyo tipo sea `Privada`.
