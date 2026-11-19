@@ -1035,15 +1035,100 @@ ORDER BY h.id_habitacion;
 | 4 | Cuarto Compartido Poblado |
 | 5 | Apartamento Laureles |
 
-Parte 11. Funciones de agregación
-56. ¿Cuántos anfitriones hay registrados?
-57. ¿Cuántos huéspedes hay registrados?
-58. ¿Cuántas habitaciones hay publicadas?
-59. ¿Cuántas reservas hay registradas?
-60. ¿Cuál es el precio promedio por noche de las habitaciones?
-61. ¿Cuál es la habitación más costosa por noche?
-62. ¿Cuál es la habitación más económica por noche?
-63. ¿Cuál es la suma total de ingresos registrados en pagos?
+### Parte 11. Funciones de agregación
+
+**56. ¿Cuántos anfitriones hay registrados?**
+
+```sql
+SELECT COUNT(*) AS total_anfitriones FROM anfitriones;
+```
+
+| total_anfitriones |
+|---|
+| 3 |
+
+**57. ¿Cuántos huéspedes hay registrados?**
+
+```sql
+SELECT COUNT(*) AS total_huespedes FROM huespedes;
+```
+
+| total_huespedes |
+|---|
+| 3 |
+
+**58. ¿Cuántas habitaciones hay publicadas?**
+
+```sql
+SELECT COUNT(*) AS total_habitaciones FROM habitaciones;
+```
+
+| total_habitaciones |
+|---|
+| 5 |
+
+**59. ¿Cuántas reservas hay registradas?**
+
+```sql
+SELECT COUNT(*) AS total_reservas FROM reservas;
+```
+
+| total_reservas |
+|---|
+| 4 |
+
+(Eran 5; la reserva 4 se eliminó en la pregunta 16.)
+
+**60. ¿Cuál es el precio promedio por noche de las habitaciones?**
+
+```sql
+SELECT ROUND(AVG(precio_noche), 2) AS precio_promedio
+FROM habitaciones;
+```
+
+| precio_promedio |
+|---|
+| 143000.00 |
+
+(160000 + 220000 + 70000 + 85000 + 180000) / 5 = 715000 / 5 = 143000.
+
+**61. ¿Cuál es la habitación más costosa por noche?**
+
+```sql
+SELECT titulo, precio_noche
+FROM habitaciones
+WHERE precio_noche = (SELECT MAX(precio_noche) FROM habitaciones);
+```
+
+| titulo | precio_noche |
+|---|---|
+| Suite Norte | 220000.00 |
+
+Se usa una subconsulta: `MAX()` solo devuelve el precio, y el `WHERE` recupera la fila (o filas, si hubiera empate) que tiene ese precio.
+
+**62. ¿Cuál es la habitación más económica por noche?**
+
+```sql
+SELECT titulo, precio_noche
+FROM habitaciones
+WHERE precio_noche = (SELECT MIN(precio_noche) FROM habitaciones);
+```
+
+| titulo | precio_noche |
+|---|---|
+| Habitación Centro Histórico | 70000.00 |
+
+**63. ¿Cuál es la suma total de ingresos registrados en pagos?**
+
+```sql
+SELECT SUM(monto) AS ingresos_totales FROM pagos;
+```
+
+| ingresos_totales |
+|---|
+| 1660000.00 |
+
+880000 + 640000 + 140000 = 1660000.
 
 Parte 12. GROUP BY
 64. ¿Cuántas habitaciones hay por tipo?
