@@ -906,15 +906,134 @@ ORDER BY r.id_reserva;
 | 3 | Mateo Herrera | Laura Gómez | Habitación Centro Histórico |
 | 5 | María López | Carlos Ramírez | Loft Central |
 
-Parte 10. Consultas de negocio con JOIN
-48. ¿Qué habitaciones pertenecen al anfitrión `Carlos Ramírez`?
-49. ¿Qué reservas tiene el huésped `Paula Ríos`?
-50. ¿Qué servicios tiene asignados la habitación `Loft Central`?
-51. ¿Qué huésped reservó la habitación `Suite Norte`?
-52. ¿Qué habitaciones tienen al menos una reseña registrada?
-53. ¿Qué habitaciones no tienen reseñas registradas? Sugerencia: usar `LEFT JOIN`.
-54. ¿Qué habitaciones tienen servicios asignados?
-55. ¿Qué habitaciones no tienen servicios asignados?
+### Parte 10. Consultas de negocio con JOIN
+
+**48. ¿Qué habitaciones pertenecen al anfitrión `Carlos Ramírez`?**
+
+```sql
+SELECT h.titulo, h.tipo, h.ciudad, h.precio_noche
+FROM habitaciones h
+JOIN anfitriones a ON a.id_anfitrion = h.id_anfitrion
+WHERE a.nombre = 'Carlos' AND a.apellido = 'Ramírez';
+```
+
+| titulo | tipo | ciudad | precio_noche |
+|---|---|---|---|
+| Loft Central | Privada | Bogotá | 160000.00 |
+| Suite Norte | Privada | Bogotá | 220000.00 |
+
+**49. ¿Qué reservas tiene el huésped `Paula Ríos`?**
+
+```sql
+SELECT r.id_reserva, h.titulo AS habitacion,
+       r.fecha_checkin, r.fecha_checkout, r.estado
+FROM reservas r
+JOIN huespedes hu   ON hu.id_huesped   = r.id_huesped
+JOIN habitaciones h ON h.id_habitacion = r.id_habitacion
+WHERE hu.nombre = 'Paula' AND hu.apellido = 'Ríos'
+ORDER BY r.fecha_checkin;
+```
+
+| id_reserva | habitacion | fecha_checkin | fecha_checkout | estado |
+|---|---|---|---|---|
+| 1 | Suite Norte | 2024-06-10 | 2024-06-14 | completada |
+| 2 | Loft Central | 2025-03-01 | 2025-03-05 | confirmada |
+
+**50. ¿Qué servicios tiene asignados la habitación `Loft Central`?**
+
+```sql
+SELECT s.nombre AS servicio, hs.costo_adicional, hs.disponible
+FROM habitacion_servicios hs
+JOIN habitaciones h ON h.id_habitacion = hs.id_habitacion
+JOIN servicios s    ON s.id_servicio   = hs.id_servicio
+WHERE h.titulo = 'Loft Central';
+```
+
+| servicio | costo_adicional | disponible |
+|---|---|---|
+| Wi-Fi | 0.00 | true |
+| Desayuno | 30000.00 | true |
+
+(El `Parqueadero` ya no aparece porque se eliminó en la pregunta 15.)
+
+**51. ¿Qué huésped reservó la habitación `Suite Norte`?**
+
+```sql
+SELECT hu.nombre || ' ' || hu.apellido AS huesped,
+       r.fecha_checkin, r.fecha_checkout, r.estado
+FROM reservas r
+JOIN huespedes hu   ON hu.id_huesped   = r.id_huesped
+JOIN habitaciones h ON h.id_habitacion = r.id_habitacion
+WHERE h.titulo = 'Suite Norte';
+```
+
+| huesped | fecha_checkin | fecha_checkout | estado |
+|---|---|---|---|
+| Paula Ríos | 2024-06-10 | 2024-06-14 | completada |
+
+**52. ¿Qué habitaciones tienen al menos una reseña registrada?**
+
+```sql
+SELECT DISTINCT h.id_habitacion, h.titulo
+FROM habitaciones h
+JOIN resenas re ON re.id_habitacion = h.id_habitacion
+ORDER BY h.id_habitacion;
+```
+
+| id_habitacion | titulo |
+|---|---|
+| 2 | Suite Norte |
+| 3 | Habitación Centro Histórico |
+
+`DISTINCT` evita que una habitación salga repetida si tiene varias reseñas.
+
+**53. ¿Qué habitaciones no tienen reseñas registradas? Sugerencia: usar `LEFT JOIN`.**
+
+```sql
+SELECT h.id_habitacion, h.titulo
+FROM habitaciones h
+LEFT JOIN resenas re ON re.id_habitacion = h.id_habitacion
+WHERE re.id_resena IS NULL
+ORDER BY h.id_habitacion;
+```
+
+| id_habitacion | titulo |
+|---|---|
+| 1 | Loft Central |
+| 4 | Cuarto Compartido Poblado |
+| 5 | Apartamento Laureles |
+
+El `LEFT JOIN` conserva todas las habitaciones y rellena con `NULL` las columnas de `resenas` cuando no hay coincidencia; el `WHERE ... IS NULL` se queda solo con esas.
+
+**54. ¿Qué habitaciones tienen servicios asignados?**
+
+```sql
+SELECT DISTINCT h.id_habitacion, h.titulo
+FROM habitaciones h
+JOIN habitacion_servicios hs ON hs.id_habitacion = h.id_habitacion
+ORDER BY h.id_habitacion;
+```
+
+| id_habitacion | titulo |
+|---|---|
+| 1 | Loft Central |
+| 2 | Suite Norte |
+| 3 | Habitación Centro Histórico |
+
+**55. ¿Qué habitaciones no tienen servicios asignados?**
+
+```sql
+SELECT h.id_habitacion, h.titulo
+FROM habitaciones h
+LEFT JOIN habitacion_servicios hs ON hs.id_habitacion = h.id_habitacion
+WHERE hs.id_habitacion IS NULL
+ORDER BY h.id_habitacion;
+```
+
+| id_habitacion | titulo |
+|---|---|
+| 4 | Cuarto Compartido Poblado |
+| 5 | Apartamento Laureles |
 
 Parte 11. Funciones de agregación
 56. ¿Cuántos anfitriones hay registrados?
