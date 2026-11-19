@@ -596,11 +596,64 @@ WHERE ciudad LIKE '%a%';
 
 Nota: `Bogotá` no aparece porque su única "a" lleva tilde (`á`), y para SQL `á` y `a` son caracteres distintos. `Medellín` no tiene ninguna "a".
 
-Parte 7. Ordenamiento
-30. Mostrar las habitaciones ordenadas alfabéticamente por título.
-31. Mostrar las habitaciones ordenadas de mayor a menor precio por noche.
-32. Mostrar las reservas ordenadas por fecha de check-in, de la más próxima a la más lejana.
-33. Mostrar los anfitriones ordenados por nombre descendente.
+### Parte 7. Ordenamiento
+
+**30. Mostrar las habitaciones ordenadas alfabéticamente por título.**
+
+```sql
+SELECT * FROM habitaciones
+ORDER BY titulo ASC;
+```
+
+| id_habitacion | id_anfitrion | titulo | tipo | ciudad | precio_noche | capacidad | fecha_publicacion |
+|---|---|---|---|---|---|---|---|
+| 5 | 2 | Apartamento Laureles | Entera | Medellín | 180000.00 | 5 | 2023-08-20 |
+| 4 | 3 | Cuarto Compartido Poblado | Compartida | Medellín | 85000.00 | 3 | 2024-03-15 |
+| 3 | 2 | Habitación Centro Histórico | Compartida | Cartagena | 70000.00 | 4 | 2023-11-05 |
+| 1 | 1 | Loft Central | Privada | Bogotá | 160000.00 | 2 | 2024-02-10 |
+| 2 | 1 | Suite Norte | Privada | Bogotá | 220000.00 | 2 | 2024-05-01 |
+
+**31. Mostrar las habitaciones ordenadas de mayor a menor precio por noche.**
+
+```sql
+SELECT * FROM habitaciones
+ORDER BY precio_noche DESC;
+```
+
+| id_habitacion | id_anfitrion | titulo | tipo | ciudad | precio_noche | capacidad | fecha_publicacion |
+|---|---|---|---|---|---|---|---|
+| 2 | 1 | Suite Norte | Privada | Bogotá | 220000.00 | 2 | 2024-05-01 |
+| 5 | 2 | Apartamento Laureles | Entera | Medellín | 180000.00 | 5 | 2023-08-20 |
+| 1 | 1 | Loft Central | Privada | Bogotá | 160000.00 | 2 | 2024-02-10 |
+| 4 | 3 | Cuarto Compartido Poblado | Compartida | Medellín | 85000.00 | 3 | 2024-03-15 |
+| 3 | 2 | Habitación Centro Histórico | Compartida | Cartagena | 70000.00 | 4 | 2023-11-05 |
+
+**32. Mostrar las reservas ordenadas por fecha de check-in, de la más próxima a la más lejana.**
+
+```sql
+SELECT * FROM reservas
+ORDER BY fecha_checkin ASC;
+```
+
+| id_reserva | id_huesped | id_habitacion | fecha_checkin | fecha_checkout | estado |
+|---|---|---|---|---|---|
+| 1 | 1 | 2 | 2024-06-10 | 2024-06-14 | completada |
+| 3 | 2 | 3 | 2024-07-20 | 2024-07-22 | completada |
+| 2 | 1 | 1 | 2025-03-01 | 2025-03-05 | confirmada |
+| 5 | 3 | 1 | 2025-04-10 | 2025-04-13 | pendiente |
+
+**33. Mostrar los anfitriones ordenados por nombre descendente.**
+
+```sql
+SELECT * FROM anfitriones
+ORDER BY nombre DESC;
+```
+
+| id_anfitrion | nombre | apellido | email | telefono |
+|---|---|---|---|---|
+| 3 | Luis | Martínez | luis.martinez@email.com | 3203334455 |
+| 2 | Laura | Gómez | laura.gomez@email.com | 3109998877 |
+| 1 | Carlos | Ramírez | carlos.ramirez@email.com | 3001112233 |
 
 Parte 8. Rangos y listas
 34. Mostrar las habitaciones con precio por noche entre `80000` y `200000`.
