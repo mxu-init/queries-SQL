@@ -594,7 +594,6 @@ WHERE ciudad LIKE '%a%';
 |---|---|---|---|---|---|---|---|
 | 3 | 2 | Habitación Centro Histórico | Compartida | Cartagena | 70000.00 | 4 | 2023-11-05 |
 
-Nota: `Bogotá` no aparece porque su única "a" lleva tilde (`á`), y para SQL `á` y `a` son caracteres distintos. `Medellín` no tiene ninguna "a".
 
 ### Parte 7. Ordenamiento
 
